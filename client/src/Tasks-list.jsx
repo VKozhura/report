@@ -3,31 +3,66 @@ import axios from 'axios';
 
 const TasksList = () => {
     const [tasks, setTasks] = React.useState([]);
+    const [startDate, setStartDate] = React.useState(null)
+    const [finishDate, setFinishDate] = React.useState(null)
+
+    const onStartChange = (e) => {
+        const value = e.target.value;
+        setStartDate(value);
+    }
+    const onFinishChange = (e) => {
+        const value = e.target.value;
+        setFinishDate(value);
+    }
+
+    console.log(startDate);
+    console.log(finishDate);
     
 
-    React.useEffect(() => {
-		const getTasks = () => {
-			const config = {
-				method: "get",
-				url: "http://localhost:5000/api",
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-			};
-			axios(config).then((response) => {
-                console.log(response.data)
-				setTasks(response.data.tasks);
+    // React.useEffect(() => {
+	// 	const getTasks = () => {
+	// 		const config = {
+	// 			method: "get",
+	// 			url: "http://localhost:5000/api",
+	// 			headers: {
+	// 				"Content-Type": "application/json",
+	// 				Accept: "application/json",
+	// 			},
+	// 		};
+	// 		axios(config).then((response) => {
+    //             console.log(response.data)
+	// 			setTasks(response.data.tasks);
                 
-			});
-		};
-		getTasks();
+	// 		});
+	// 	};
+	// 	getTasks();
   
-	}, []);
+	// }, []);
  
     console.log(tasks)
 
+    const onTasks = () => {
+        const config = {
+            method: "get",
+            url: `http://localhost:5000/api?date1=${startDate}&date2=${finishDate}`,
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+        };
+        axios(config).then((response) => {
+            console.log(response.data)
+            setTasks(response.data.tasks);
+            
+        });
+    }
+
     return (
+        <div>
+        <input type="date" onChange={onStartChange}/>
+        <input type="date" onChange={onFinishChange}/>
+        <button onClick={onTasks}>Сформировать</button>
+
        <table>
         <thead>
             <tr>
@@ -60,7 +95,8 @@ const TasksList = () => {
             ))}
         </tbody>
            
-       </table> 
+       </table>
+       </div>
     )
 }
 

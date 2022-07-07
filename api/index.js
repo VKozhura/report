@@ -19,6 +19,7 @@ app.use(express.json()); //чтобы приложение парсило json �
 
 
 app.get('/api', async (req, res) => {
+  console.log(req.query.date1)
   try {
     const results = await db.query(`select distinct journalized_id  as taskNumber,
     t.name                                                          as tracker,
@@ -46,9 +47,9 @@ and j_j.id in (select max(j.id)
        and private_notes = 'false'
      group by j.journalized_id)
 
-and ((i_i.created_on < '2022-05-01' and closed_on is null) 
-or (i_i.created_on < '2022-05-01' and i_i.closed_on between '2022-05-01' and '2022-05-31') 
-or (i_i.created_on between '2022-05-01' and '2022-05-31')) 
+and ((i_i.created_on < ${toString(req.query.date1)} and closed_on is null) 
+or (i_i.created_on < ${toString(req.query.date1)} and i_i.closed_on between ${toString(req.query.date1)} and ${toString(req.query.date2)}) 
+or (i_i.created_on between ${toString(req.query.date1)} and ${toString(req.query.date2)})) 
 and i_i.id not in (
          80768,
          80783,
