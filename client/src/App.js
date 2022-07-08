@@ -6,7 +6,7 @@ function App() {
   return (
     <>
     <h1>отобразить данные из Redmine</h1>
-    <Header/>
+    {/* <Header/> */}
     <TasksList/>
    </>
   );

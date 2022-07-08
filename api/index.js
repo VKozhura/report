@@ -20,6 +20,7 @@ app.use(express.json()); //чтобы приложение парсило json �
 
 app.get('/api', async (req, res) => {
   console.log(req.query.date1)
+  console.log(req.query.date2)
   try {
     const results = await db.query(`select distinct journalized_id  as taskNumber,
     t.name                                                          as tracker,
@@ -47,9 +48,9 @@ and j_j.id in (select max(j.id)
        and private_notes = 'false'
      group by j.journalized_id)
 
-and ((i_i.created_on < ${toString(req.query.date1)} and closed_on is null) 
-or (i_i.created_on < ${toString(req.query.date1)} and i_i.closed_on between ${toString(req.query.date1)} and ${toString(req.query.date2)}) 
-or (i_i.created_on between ${toString(req.query.date1)} and ${toString(req.query.date2)})) 
+and (( extract(epoch from i_i.created_on) < ${req.query.date1} and closed_on is null) 
+or (extract(epoch from i_i.created_on) < ${req.query.date1} and extract(epoch from i_i.closed_on) between ${req.query.date1} and ${req.query.date2}) 
+or (extract(epoch from i_i.created_on) between ${req.query.date1} and ${req.query.date2})) 
 and i_i.id not in (
          80768,
          80783,

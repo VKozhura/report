@@ -2,7 +2,7 @@ import React from "react";
 import axios from 'axios';
 
 const TasksList = () => {
-    const [tasks, setTasks] = React.useState([]);
+    const [tasks, setTasks] = React.useState();
     const [startDate, setStartDate] = React.useState(null)
     const [finishDate, setFinishDate] = React.useState(null)
 
@@ -15,8 +15,8 @@ const TasksList = () => {
         setFinishDate(value);
     }
 
-    console.log(startDate);
-    console.log(finishDate);
+    console.log(Date.parse(new Date (startDate)));
+    console.log(Date.parse(new Date (finishDate)));
     
 
     // React.useEffect(() => {
@@ -44,7 +44,7 @@ const TasksList = () => {
     const onTasks = () => {
         const config = {
             method: "get",
-            url: `http://localhost:5000/api?date1=${startDate}&date2=${finishDate}`,
+            url: `http://localhost:5000/api?date1=${(Date.parse(new Date (startDate)))/1000}&date2=${(Date.parse(new Date (finishDate)))/1000}`,
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
@@ -63,7 +63,7 @@ const TasksList = () => {
         <input type="date" onChange={onFinishChange}/>
         <button onClick={onTasks}>Сформировать</button>
 
-       <table>
+        {tasks ? (<table>
         <thead>
             <tr>
                 <th>Задача</th>
@@ -95,7 +95,9 @@ const TasksList = () => {
             ))}
         </tbody>
            
-       </table>
+       </table>) : null }
+            
+       
        </div>
     )
 }
