@@ -43,14 +43,7 @@ const TasksList = () => {
 	console.log(tasks);
 
 	const onTasks = () => {
-		const userName = "vkozhura";
-		const password = "jrsoVsyYXm";
-		const token = `${userName}:${password}`;
-		const url = "https://redmine.bivgroup.com/issues.json";
-		// const encodedToken = Buffer.from(token).toString('base64');
-		const instance = axios.create({
-			withCredentials: true,
-		});
+		
 		const config = {
 			method: "get",
 			// url: `http://localhost:5000/api?date1=${(Date.parse(new Date (startDate)))/1000}&date2=${(Date.parse(new Date (finishDate)))/1000}`,
@@ -59,12 +52,9 @@ const TasksList = () => {
 				// 'Authorization': 'Basic '+ encodedToken,
 				"Content-Type": "application/json",
 				Accept: "application/json",
-				// "X-Redmine-API-Key": "c4bb0c5363355760be678f1ed6e30de09b3495d2",
+				
 				"Access-Control-Allow-Origin": "http://localhost:3000",
-				auth: {
-					username: "vkozhura",
-					password: "jrsoVsyYXm",
-				},
+				
 				withCredentials: true,
 			},
 		};
