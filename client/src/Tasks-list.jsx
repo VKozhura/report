@@ -17,8 +17,8 @@ const TasksList = () => {
 		setFinishDate(value);
 	};
 
-	console.log(Date.parse(new Date(startDate)));
-	console.log(Date.parse(new Date(finishDate)));
+	// console.log(Date.parse(new Date(startDate)));
+	// console.log(Date.parse(new Date(finishDate)));
 
 	// React.useEffect(() => {
 	// 	const getTasks = () => {
@@ -40,31 +40,28 @@ const TasksList = () => {
 
 	// }, []);
 
-	console.log(tasks);
 
 	const onTasks = () => {
-		
+	
 		const config = {
 			method: "get",
 			// url: `http://localhost:5000/api?date1=${(Date.parse(new Date (startDate)))/1000}&date2=${(Date.parse(new Date (finishDate)))/1000}`,
-			url: "https://redmine.bivgroup.com/issues.json",
+			url: "https://redmine.bivgroup.com/issues.json?status_id=*&include=journals",
 			headers: {
-				// 'Authorization': 'Basic '+ encodedToken,
 				"Content-Type": "application/json",
 				Accept: "application/json",
-				
-				"Access-Control-Allow-Origin": "http://localhost:3000",
-				
-				withCredentials: true,
+				"X-Redmine-API-Key": "c4bb0c5363355760be678f1ed6e30de09b3495d2",
+                
 			},
 		};
 
 		axios(config).then((response) => {
 			console.log(response.data);
-			setTasks(response.data.tasks);
+			setTasks(response.data.issues);
 		});
 	};
 
+    console.log(tasks);
 	return (
 		<div>
 			<input type="date" onChange={onStartChange} />
@@ -83,7 +80,6 @@ const TasksList = () => {
 							<th>Приоритет</th>
 							<th>Трудозатраты (в ч.)</th>
 							<th>Создано</th>
-							<th>Обновлено</th>
 							<th>Закрыто</th>
 							<th>Создано_Решено</th>
 							<th>Интервал</th>
@@ -91,19 +87,18 @@ const TasksList = () => {
 					</thead>
 					<tbody>
 						{tasks.map((task, index) => (
-							<tr key={task.tasknumber}>
+							<tr key={task.id}>
 								<th>{index + 1}</th>
-								<th>{task.tasknumber}</th>
-								<th>{task.tracker}</th>
-								<th>{task.theme}</th>
-								<th>{task.status}</th>
-								<th>{task.priority}</th>
-								<th>{task.labour}</th>
-								<th>{dateConvert(task.createdate)}</th>
-								<th>{dateConvert(task.closeddate)}</th>
-								<th>{dateConvert(task.updatedate)}</th>
-								<th>{(task.createclosed / 60).toFixed(2)}</th>
-								<th>{(task.interv / 60).toFixed(2)}</th>
+								<th>{task.id}</th>
+								<th>{task.tracker.name}</th>
+								<th>{task.subject}</th>
+								<th>{task.status.name}</th>
+								<th>{task.priority.name}</th>
+								<th>{task.estimated_hours}</th>
+								<th>{dateConvert(task.created_on)}</th>
+								<th>{dateConvert(task.closed_on)}</th>
+								<th></th>
+								<th></th>
 							</tr>
 						))}
 					</tbody>
