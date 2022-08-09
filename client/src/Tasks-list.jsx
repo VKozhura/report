@@ -10,6 +10,7 @@ const onScrollTasks = (event) => {
 
 const TasksList = () => {
 	const [tasks, setTasks] = React.useState({ data: [], portion: 0, page: 0, totalCount: 0});
+	const [tasksCreatedBefore, setTasksCreatedBefore] = React.useState({ data: [], portion: 0, page: 0, totalCount: 0});
 	const [startDate, setStartDate] = React.useState(null);
 	const [start2Date, setStart2Date] = React.useState(null);
 	const [startBeforeDate, setStartBeforeDate] = React.useState(null);
@@ -31,32 +32,9 @@ const TasksList = () => {
 	};
 	
 
-	// console.log(Date.parse(new Date(startDate)));
-	// console.log(Date.parse(new Date(finishDate)));
-
-	// React.useEffect(() => {
-	// 	const getTasks = () => {
-	// 		const config = {
-	// 			method: "get",
-	// 			url: "http://localhost:5000/api",
-	// 			headers: {
-	// 				"Content-Type": "application/json",
-	// 				Accept: "application/json",
-	// 			},
-	// 		};
-	// 		axios(config).then((response) => {
-	//             console.log(response.data)
-	// 			setTasks(response.data.tasks);
-
-	// 		});
-	// 	};
-	// 	getTasks();
-
-	// }, []);
-
 	const fetchTasks = () => {
 		console.log(tasks.page);
-		const config = {
+		const config1 = {
 			method: "get",
 			url: `https://redmine.bivgroup.com/issues.json?status_id=*&offset=${tasks.portion}&limit=50&created_on=%3E%3C${startDate}|${start2Date}`,
 			headers: {
@@ -66,7 +44,7 @@ const TasksList = () => {
 			},
 		};
 	
-		axios(config).then((response) => {
+		axios(config1).then((response) => {
 			console.log('получение данных');
 			console.log(response.data.total_count);
 			setTasks({ 
