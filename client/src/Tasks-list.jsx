@@ -43,6 +43,16 @@ const TasksList = () => {
 				"X-Redmine-API-Key": "c4bb0c5363355760be678f1ed6e30de09b3495d2",
 			},
 		};
+
+		const config2 = {
+			method: "get",
+			url: `https://redmine.bivgroup.com/issues.json?status_id=*&offset=0&limit=50&created_on=%3C%3D${startDate}&status_id=open`,
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+				"X-Redmine-API-Key": "c4bb0c5363355760be678f1ed6e30de09b3495d2",
+			},
+		};
 	
 		axios(config1).then((response) => {
 			console.log('получение данных');
@@ -50,10 +60,21 @@ const TasksList = () => {
 			setTasks({ 
 				data: [...tasks.data, ...response.data.issues],
 				page: tasks.page + 1,
-				
 				totalCount: response.data.total_count
 			})
 			setTasks(tasks => ({...tasks, portion: tasks.data.length + 1}))
+		});
+
+		axios(config2).then((response) => {
+			console.log('получение данных 2');
+			console.log(response.data.total_count);
+			setTasksCreatedBefore({ 
+				data: [...tasksCreatedBefore.data, ...response.data.issues],
+				page: tasksCreatedBefore.page,
+				
+				totalCount: response.data.total_count
+			})
+			
 		});
 	}
 
