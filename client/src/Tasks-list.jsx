@@ -3,20 +3,21 @@ import axios from "axios";
 
 import { dateConvert } from "./functions";
 
-
-const onScrollTasks = (event) => {
-
-}
+const onScrollTasks = (event) => {};
 
 const TasksList = () => {
-	const [tasks, setTasks] = React.useState({ data: [], portion: 0, page: 0, totalCount: 0});
-	const [tasksCreatedBefore, setTasksCreatedBefore] = React.useState({ data: [], portion: 0, page: 0, totalCount: 0});
+	const [tasks, setTasks] = React.useState({ data: [], portion: 0, page: 0, totalCount: 0 });
+	const [tasksCreatedBefore, setTasksCreatedBefore] = React.useState({
+		data: [],
+		portion: 0,
+		page: 0,
+		totalCount: 0,
+	});
 	const [startDate, setStartDate] = React.useState(null);
 	const [start2Date, setStart2Date] = React.useState(null);
 	const [startBeforeDate, setStartBeforeDate] = React.useState(null);
 	const portion = 50;
 	const totalPages = Math.ceil(tasks.totalCount / portion);
-
 
 	const onStartChange = (e) => {
 		const value = e.target.value;
@@ -30,7 +31,6 @@ const TasksList = () => {
 		const value = e.target.value;
 		setStartBeforeDate(value);
 	};
-	
 
 	const fetchTasks = () => {
 		console.log(tasks.page);
@@ -54,32 +54,30 @@ const TasksList = () => {
 			},
 		};
 
-		Promise.all([axios(config1), axios(config2)]).then(response => {
-			console.log('получение данных');
+		Promise.all([axios(config1), axios(config2)]).then((response) => {
+			console.log("получение данных");
 			console.log(response);
-			let issuesArr = []
-			let totalCount = 0
-			let page = 
-			response.forEach(item => {
-				issuesArr = [...issuesArr, ...item.data.issues]
-				totalCount = totalCount + item.data.total_count
-				console.log(issuesArr)
-				
-			})
-			setTasks({ 
+			let issuesArr = [];
+			let totalCount = 0;
+			response.forEach((item) => {
+				issuesArr = [...issuesArr, ...item.data.issues];
+				totalCount = totalCount + item.data.total_count;
+				console.log(issuesArr);
+			});
+			setTasks({
 				data: [...tasks.data, ...issuesArr],
-				// page: tasks.page + 1,
-				totalCount: totalCount
-			})
-			setTasks(tasks => ({...tasks, portion: issuesArr.length + 1}))
-		})
+				page: tasks.page + 1,
+				totalCount: totalCount,
+			});
+			setTasks((tasks) => ({ ...tasks, portion: issuesArr.length + 1 }));
+		});
 
 		console.log(tasks);
-	
+
 		// axios(config1).then((response) => {
 		// 	console.log('получение данных');
 		// 	console.log(response.data.total_count);
-		// 	setTasks({ 
+		// 	setTasks({
 		// 		data: [...tasks.data, ...response.data.issues],
 		// 		page: tasks.page + 1,
 		// 		totalCount: response.data.total_count
@@ -90,21 +88,19 @@ const TasksList = () => {
 		// axios(config2).then((response) => {
 		// 	console.log('получение данных 2');
 		// 	console.log(response.data.total_count);
-		// 	setTasksCreatedBefore({ 
+		// 	setTasksCreatedBefore({
 		// 		data: [...tasksCreatedBefore.data, ...response.data.issues],
 		// 		page: tasksCreatedBefore.page,
-				
+
 		// 		totalCount: response.data.total_count
 		// 	})
-			
+
 		// });
-	}
-
-
-	const onTasks = () => {
-		fetchTasks()
 	};
 
+	const onTasks = () => {
+		fetchTasks();
+	};
 
 	const onAddTasks = () => {
 		const config = {
@@ -115,39 +111,37 @@ const TasksList = () => {
 				"Content-Type": "application/json",
 				Accept: "application/json",
 				"X-Redmine-API-Key": "c4bb0c5363355760be678f1ed6e30de09b3495d2",
-                
 			},
 		};
 
 		axios(config).then((response) => {
 			console.log(response.data);
 
-			const totalTasks = [...tasks, ...response.data.issues ]
+			const totalTasks = [...tasks, ...response.data.issues];
 			setTasks(totalTasks);
-			
 		});
-	}
+	};
 
 	const lastItem = React.createRef();
-  	const observerLoader = React.useRef();
+	const observerLoader = React.useRef();
 
-  	const actionInSight = (entries) => {
+	const actionInSight = (entries) => {
 		if (entries[0].isIntersecting && tasks.page <= totalPages) {
 			fetchTasks();
 		}
-  	};
+	};
 
-  	//вешаем на последний элемент наблюдателя, когда последний элемент меняется
-  	React.useEffect(() => {
-    	if (observerLoader.current) observerLoader.current.disconnect();
+	//вешаем на последний элемент наблюдателя, когда последний элемент меняется
+	React.useEffect(() => {
+		if (observerLoader.current) observerLoader.current.disconnect();
 
-    	observerLoader.current = new IntersectionObserver(actionInSight);
-    	if (lastItem.current) observerLoader.current.observe(lastItem.current);
-  	}, [lastItem]);
+		observerLoader.current = new IntersectionObserver(actionInSight);
+		if (lastItem.current) observerLoader.current.observe(lastItem.current);
+	}, [lastItem]);
 
-    console.log(tasks);
+	console.log(tasks);
 	return (
-		<div >
+		<div>
 			<input type="date" onChange={onStartChange} />
 			<input type="date" onChange={onFinishChange} />
 			<button onClick={onTasks}>Сформировать</button>
@@ -176,7 +170,24 @@ const TasksList = () => {
 					<tbody>
 						{tasks.data.map((task, index) => {
 							if (index + 1 === tasks.data.length) {
-								return (<tr key={task.id} ref={lastItem}>
+								return (
+									<tr key={task.id} ref={lastItem}>
+										<th>{index + 1}</th>
+										<th>{task.id}</th>
+										<th>{task.tracker.name}</th>
+										<th>{task.subject}</th>
+										<th>{task.status.name}</th>
+										<th>{task.priority.name}</th>
+										<th>{task.estimated_hours}</th>
+										<th>{dateConvert(task.created_on)}</th>
+										<th>{task.closed_on !== null ? dateConvert(task.closed_on) : "не закрыта"}</th>
+										<th></th>
+										<th></th>
+									</tr>
+								);
+							}
+							return (
+								<tr key={task.id}>
 									<th>{index + 1}</th>
 									<th>{task.id}</th>
 									<th>{task.tracker.name}</th>
@@ -185,24 +196,11 @@ const TasksList = () => {
 									<th>{task.priority.name}</th>
 									<th>{task.estimated_hours}</th>
 									<th>{dateConvert(task.created_on)}</th>
-									<th>{task.closed_on !== null ? dateConvert(task.closed_on) : 'не закрыта'}</th>
+									<th>{task.closed_on !== null ? dateConvert(task.closed_on) : "не закрыта"}</th>
 									<th></th>
 									<th></th>
-								</tr>)
-							}
-							return (<tr key={task.id}>
-								<th>{index + 1}</th>
-								<th>{task.id}</th>
-								<th>{task.tracker.name}</th>
-								<th>{task.subject}</th>
-								<th>{task.status.name}</th>
-								<th>{task.priority.name}</th>
-								<th>{task.estimated_hours}</th>
-								<th>{dateConvert(task.created_on)}</th>
-								<th>{task.closed_on !== null ? dateConvert(task.closed_on) : 'не закрыта'}</th>
-								<th></th>
-								<th></th>
-							</tr>)
+								</tr>
+							);
 						})}
 					</tbody>
 				</table>
