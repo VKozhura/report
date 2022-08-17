@@ -23,7 +23,7 @@ const TasksList = () => {
 		setStartDate(value);
 	};
 	const onFinishChange = (e) => {
-		const value = e.target.value;го
+		const value = e.target.value;
 		setStart2Date(value);
 	};
 	const onStartBefore = (e) => {
