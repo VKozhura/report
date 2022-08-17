@@ -23,7 +23,7 @@ const TasksList = () => {
 		setStartDate(value);
 	};
 	const onFinishChange = (e) => {
-		const value = e.target.value;
+		const value = e.target.value;го
 		setStart2Date(value);
 	};
 	const onStartBefore = (e) => {
@@ -53,29 +53,51 @@ const TasksList = () => {
 				"X-Redmine-API-Key": "c4bb0c5363355760be678f1ed6e30de09b3495d2",
 			},
 		};
-	
-		axios(config1).then((response) => {
-			console.log('получение данных');
-			console.log(response.data.total_count);
-			setTasks({ 
-				data: [...tasks.data, ...response.data.issues],
-				page: tasks.page + 1,
-				totalCount: response.data.total_count
-			})
-			setTasks(tasks => ({...tasks, portion: tasks.data.length + 1}))
-		});
 
-		axios(config2).then((response) => {
-			console.log('получение данных 2');
-			console.log(response.data.total_count);
-			setTasksCreatedBefore({ 
-				data: [...tasksCreatedBefore.data, ...response.data.issues],
-				page: tasksCreatedBefore.page,
+		Promise.all([axios(config1), axios(config2)]).then(response => {
+			console.log('получение данных');
+			console.log(response);
+			let issuesArr = []
+			let totalCount = 0
+			let page = 
+			response.forEach(item => {
+				issuesArr = [...issuesArr, ...item.data.issues]
+				totalCount = totalCount + item.data.total_count
+				console.log(issuesArr)
 				
-				totalCount: response.data.total_count
 			})
+			setTasks({ 
+				data: [...tasks.data, ...issuesArr],
+				// page: tasks.page + 1,
+				totalCount: totalCount
+			})
+			setTasks(tasks => ({...tasks, portion: issuesArr.length + 1}))
+		})
+
+		console.log(tasks);
+	
+		// axios(config1).then((response) => {
+		// 	console.log('получение данных');
+		// 	console.log(response.data.total_count);
+		// 	setTasks({ 
+		// 		data: [...tasks.data, ...response.data.issues],
+		// 		page: tasks.page + 1,
+		// 		totalCount: response.data.total_count
+		// 	})
+		// 	setTasks(tasks => ({...tasks, portion: tasks.data.length + 1}))
+		// });
+
+		// axios(config2).then((response) => {
+		// 	console.log('получение данных 2');
+		// 	console.log(response.data.total_count);
+		// 	setTasksCreatedBefore({ 
+		// 		data: [...tasksCreatedBefore.data, ...response.data.issues],
+		// 		page: tasksCreatedBefore.page,
+				
+		// 		totalCount: response.data.total_count
+		// 	})
 			
-		});
+		// });
 	}
 
 
@@ -163,7 +185,7 @@ const TasksList = () => {
 									<th>{task.priority.name}</th>
 									<th>{task.estimated_hours}</th>
 									<th>{dateConvert(task.created_on)}</th>
-									<th>{dateConvert(task.closed_on)}</th>
+									<th>{task.closed_on !== null ? dateConvert(task.closed_on) : 'не закрыта'}</th>
 									<th></th>
 									<th></th>
 								</tr>)
@@ -177,7 +199,7 @@ const TasksList = () => {
 								<th>{task.priority.name}</th>
 								<th>{task.estimated_hours}</th>
 								<th>{dateConvert(task.created_on)}</th>
-								<th>{dateConvert(task.closed_on)}</th>
+								<th>{task.closed_on !== null ? dateConvert(task.closed_on) : 'не закрыта'}</th>
 								<th></th>
 								<th></th>
 							</tr>)
