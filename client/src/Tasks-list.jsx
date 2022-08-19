@@ -54,6 +54,8 @@ const TasksList = () => {
 			},
 		};
 
+
+
 		Promise.all([axios(config1), axios(config2)]).then((response) => {
 			console.log("получение данных");
 			console.log(response);
@@ -64,15 +66,23 @@ const TasksList = () => {
 				totalCount = totalCount + item.data.total_count;
 				console.log(issuesArr);
 			});
-			setTasks({
-				data: [...tasks.data, ...issuesArr],
-				page: tasks.page + 1,
-				totalCount: totalCount,
-			});
-			setTasks((tasks) => ({ ...tasks, portion: issuesArr.length + 1 }));
+			
+			setTasks(tasks => {
+				// const filtered =  ;
+				// console.log(filtered);
+				return ({
+					// data: [...tasks.data, ...issuesArr],
+					data: tasks.data.concat(issuesArr.filter(issue => !tasks.data.includes(issue))),
+					page: tasks.page + 1,
+					totalCount: totalCount,
+				})
+			})
+				
+			setTasks((tasks) => ({ ...tasks, portion: tasks.data.length - response[1].data.total_count + 1 }));
 		});
 
-		console.log(tasks);
+		
+		// a.concat(b.filter(x => !a.includes(x)))
 
 		// axios(config1).then((response) => {
 		// 	console.log('получение данных');
